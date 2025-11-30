@@ -50,6 +50,38 @@ async function run() {
         result,
       });
     });
+    //*4 update the page
+    app.put("/books/:id", async (req, res) => {
+      const { id } = req.params;
+      const data = req.body;
+      const objectId = new ObjectId(id);
+      const filter = { _id: objectId };
+      const update = {
+        $set: data,
+      };
+      const result = await bookCollection.updateOne(filter, update);
+
+      res.send({
+        success: true,
+        result,
+      });
+    });
+    //*5 delete the specific data
+    app.delete("/books/:id", async (req, res) => {
+      const { id } = req.params;
+      const result = await bookCollection.deleteOne({ _id: new ObjectId(id) });
+      res.send({
+        success: true,
+        result,
+      });
+    });
+
+    //*6 my models page
+    app.get("/myBooks", async (req, res) => {
+      const email = req.query.email;
+      const result = await bookCollection.find({ userEmail: email }).toArray();
+      res.send(result);
+    });
 
     // await client.db("admin").command({ ping: 1 });
     console.log(
