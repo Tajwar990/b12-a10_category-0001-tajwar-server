@@ -23,12 +23,23 @@ async function run() {
     // await client.connect();
 
     const db = client.db("book-db");
-    const modelCollection = db.collection("books");
+    const bookCollection = db.collection("books");
 
     //* 1 see all the data in browser for models
-    app.get("/models", async (req, res) => {
-      const result = await modelCollection.find().toArray();
+    app.get("/books", async (req, res) => {
+      const result = await bookCollection.find().toArray();
       res.send(result);
+    });
+
+    //* post the data
+    app.post("/books", async (req, res) => {
+      const data = req.body;
+      // console.log(data)
+      const result = await bookCollection.insertOne(data);
+      res.send({
+        success: true,
+        result,
+      });
     });
 
     // await client.db("admin").command({ ping: 1 });
