@@ -27,8 +27,23 @@ async function run() {
 
     //* 1 see all the data in browser for models
     app.get("/books", async (req, res) => {
-      const result = await bookCollection.find().toArray();
-      res.send(result);
+      try {
+        const { sort } = req.query;
+
+        let sortOption = {};
+        if (sort === "high") sortOption = { rating: -1 };
+        else if (sort === "low") sortOption = { rating: 1 };
+
+        const result = await bookCollection
+          .find()
+          .sort(sortOption)
+          .collation({ locale: "en_US", numericOrdering: true })
+          .toArray();
+
+        res.send(result);
+      } catch (err) {
+        res.status(500).send({ success: false, message: err.message });
+      }
     });
 
     //*2 post the data
@@ -83,7 +98,7 @@ async function run() {
       res.send(result);
     });
 
-    //* 7 latest 6 data anbo home page e
+    //* 7 latest 6 data
     app.get("/latest-books", async (req, res) => {
       const result = await bookCollection
         .find()
@@ -92,7 +107,6 @@ async function run() {
         .toArray();
       res.send(result);
     });
-
     // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
