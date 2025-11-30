@@ -31,11 +31,20 @@ async function run() {
       res.send(result);
     });
 
-    //* post the data
+    //*2 post the data
     app.post("/books", async (req, res) => {
       const data = req.body;
-      // console.log(data)
       const result = await bookCollection.insertOne(data);
+      res.send({
+        success: true,
+        result,
+      });
+    });
+    //* 3 View details
+    app.get("/books/:id", async (req, res) => {
+      const { id } = req.params;
+      const objectId = new ObjectId(id);
+      const result = await bookCollection.findOne({ _id: objectId });
       res.send({
         success: true,
         result,
