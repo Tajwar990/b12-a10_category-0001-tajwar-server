@@ -83,6 +83,16 @@ async function run() {
       res.send(result);
     });
 
+    //* 7 latest 6 data anbo home page e
+    app.get("/latest-books", async (req, res) => {
+      const result = await bookCollection
+        .find()
+        .sort({ $natural: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
+
     // await client.db("admin").command({ ping: 1 });
     console.log(
       "Pinged your deployment. You successfully connected to MongoDB!"
